@@ -1,0 +1,21 @@
+version: '3'
+services:
+  tk-backend:
+    build: .
+    container_name: "tk-backend"
+    ports:
+      - "5000:5000"
+    networks:
+      - tk-net
+  tk-front:
+    container_name: "tk-front"
+    image: httpd:2.4
+    volumes:
+      - ./frontend/dist/:/usr/local/apache2/htdocs/
+      - ./custom-httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+      - "8080:80"
+    networks:
+      - tk-net
+networks:
+  tk-net:
