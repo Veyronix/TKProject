@@ -6,8 +6,10 @@
     :mini-variant="mini"
   >
     <v-list>
-      <v-list-item-title class="title text-uppercase">
-        <span>Cool video</span>
+      <v-list-item-title
+        class="title text-uppercase ml-2 mb-n2"
+      >
+        Cool video
       </v-list-item-title>
     </v-list>
 

@@ -5,17 +5,16 @@
     </v-card-title>
     <v-file-input
       v-model="files"
+      accept=".avi,.mp4"
       :multiple="false"
       :show-size="1024"
-      placeholder="Wybierz plik"
+      placeholder="Choose video file"
       prepend-icon="mdi-paperclip"
       outlined
-      @input="$v.files.$touch()"
+      :rules="[validate_button]"
     >
-      <v-btn small>
-        Normal
-      </v-btn>
     </v-file-input>
+    <v-divider class="mx-4 mb-4" />
     <p class="text-left">
       Convert to
     </p>
@@ -24,6 +23,7 @@
         <v-radio-group
           v-model="newFormat"
           :mandatory="true"
+          class="ml-5"
           row
         >
           <v-radio
@@ -38,8 +38,10 @@
       </v-container>
     </v-row>
     <v-btn
-      small
+      big
+      color="primary"
       :loading="uploading"
+      :disabled="!button_is_enabled"
       @click="importVideo"
     >
       Convert video
@@ -58,6 +60,7 @@
         uploading: false,
         newFormat: 'Avi',
         showInfo: false,
+        button_is_enabled: false,
       }
     },
     computed: {
@@ -88,10 +91,16 @@
             console.log(error)
           })
       },
+      validate_button () {
+        this.button_is_enabled = !!this.files && this.files.length === 1
+      },
     },
   }
 </script>
 
 <style scoped>
-
+  p {
+    font-size: 20px;
+    padding-left: 20px;
+  }
 </style>

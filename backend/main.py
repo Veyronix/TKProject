@@ -30,11 +30,6 @@ CORS(app)
 #
 #     return 1
 
-# while not ws.closed:
-#     ws.send('twoja dupa')
-#     message = ws.receive()
-#     print(message)
-#     ws.send(message)
 
 
 @app.route("/convertVideo/<newFormat>", methods=["POST"])
@@ -52,11 +47,6 @@ def convertVideo(newFormat):
                                    args=(newFormat, tmp_filename, new_filename, videos_status))
         thread1.start()
 
-        # new_file_name = video_converter.video_name(f.filename) + '.' + newFormat
-        #
-        # response = make_response(send_file(converter_filename, attachment_filename=new_file_name))
-        # response.headers['x-suggested-filename'] = new_file_name
-        # return response
         return jsonify(uuid=new_filename)
 
 
@@ -75,12 +65,12 @@ def simpleEditVideo(operations):
 
         thread1 = threading.Thread(target=video_converter.simple_edit_video,
                                    args=(tmp_filename, operations, new_filename, videos_status))
+
+        # thread1 = threading.Thread(target=video_converter.watermark,
+        #                            args=(tmp_filename, operations, new_filename, videos_status))
+
         thread1.start()
-        # edited_filename = video_converter.simple_edit_video(tmp_filename, operations, new_filename)
-        # edited_filename = "dc34be14-aa82-4608-9672-1c84cf8ef483.mp4"
-        # filename = "dupa321.mp4"
-        # response = make_response(send_file(edited_filename, attachment_filename=filename))
-        # response.headers['x-suggested-filename'] = filename
+
         return jsonify(uuid=new_filename)
 
 

@@ -17,8 +17,6 @@ export default {
     },
     downloadRec (userUUID, filename, callback) {
         const recFun = function () {
-            console.log(filename)
-            console.log('tutaj')
             setTimeout(function () {
                 client.post(`/downloadVideo/${userUUID}`, null, {
                     responseType: 'blob',
@@ -27,7 +25,7 @@ export default {
                         console.log('not found')
                         recFun()
                     } else {
-                        console.log('fouuuuund')
+                        console.log('found')
                         console.log(response)
                         console.log(response.data)
                         const file = new File([response.data], filename)
@@ -35,8 +33,8 @@ export default {
                         callback()
                     }
                 }).catch(error => {
-                    console.log('duppapppapa')
                     console.log(error)
+                    callback()
                 })
             }, 3000)
         }
