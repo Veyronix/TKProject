@@ -1,7 +1,7 @@
 <template>
   <v-card-text>
     <v-card-title>
-      Convert
+      Choose video
     </v-card-title>
     <v-file-input
       v-model="files"
@@ -12,8 +12,7 @@
       prepend-icon="mdi-paperclip"
       outlined
       :rules="[validate_button]"
-    >
-    </v-file-input>
+    />
     <v-divider class="mx-4 mb-4" />
     <p class="text-left">
       Convert to
@@ -37,6 +36,13 @@
         </v-radio-group>
       </v-container>
     </v-row>
+    <v-alert
+      v-model="alert"
+      type="error"
+      dismissible
+    >
+      Error! Something went wrong. Try again.
+    </v-alert>
     <v-btn
       big
       color="primary"
@@ -46,6 +52,14 @@
     >
       Convert video
     </v-btn>
+    <v-progress-linear
+      v-model="percent"
+      class="mt-4"
+      color="light-blue"
+      height="30"
+      :active="uploading"
+      striped
+    />
   </v-card-text>
 </template>
 
@@ -60,6 +74,8 @@
         uploading: false,
         newFormat: 'Avi',
         showInfo: false,
+        percent: 0,
+        alert: false,
         button_is_enabled: false,
       }
     },
@@ -82,12 +98,18 @@
             console.log('convert response')
             console.log(response)
             console.log(response.data.uuid)
-            service.downloadRec(response.data.uuid, filename, function () {
+            service.downloadRec(response.data.uuid, filename, function (value) { that.percent = value }, function () {
+              if (that.percent !== 100) {
+                that.alert = true
+              }
               that.uploading = false
+              that.percent = 0
             })
           })
           .catch(error => {
             that.uploading = false
+            that.percent = 0
+            that.alert = true
             console.log(error)
           })
       },

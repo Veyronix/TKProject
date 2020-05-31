@@ -1,7 +1,7 @@
 <template>
   <v-card-text>
     <v-card-title>
-      Editor
+      Choose video
     </v-card-title>
     <v-file-input
       v-model="files"
@@ -115,6 +115,13 @@
         />
       </v-col>
     </v-row>
+    <v-alert
+      v-model="alert"
+      type="error"
+      dismissible
+    >
+      Error! Something went wrong. Try again.
+    </v-alert>
     <v-btn
       big
       color="primary"
@@ -124,6 +131,14 @@
     >
       Convert video
     </v-btn>
+    <v-progress-linear
+      v-model="percent"
+      class="mt-4"
+      color="light-blue"
+      height="30"
+      :active="uploading"
+      striped
+    />
   </v-card-text>
 </template>
 
@@ -142,6 +157,8 @@
         vflip: false,
         from: null,
         to: null,
+        percent: 0,
+        alert: false,
         text_to_add: null,
         font_colors: ['red', 'black', 'white', 'blue'],
         selected_font_color: 'white',
@@ -177,12 +194,18 @@
           .then(response => {
             console.log('edit response')
             console.log(response)
-            service.downloadRec(response.data.uuid, filename, function () {
+            service.downloadRec(response.data.uuid, filename, function (value) { that.percent = value }, function () {
+              if (that.percent !== 100) {
+                that.alert = true
+              }
               that.uploading = false
+              that.percent = 0
             })
           })
           .catch(error => {
             that.uploading = false
+            that.percent = 0
+            that.alert = true
             console.log(error)
           })
       },

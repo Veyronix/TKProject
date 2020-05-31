@@ -24,6 +24,10 @@
             path: '/editor',
             title: 'Edit video',
           },
+          {
+            path: '/watermark',
+            title: 'Put watermark',
+          },
         ],
       }
     },
