@@ -14,6 +14,9 @@ export default new Router({
             path: '/',
             name: 'converter',
             component: ConverterView,
+            meta: {
+                title: 'Dupa',
+            },
         },
         {
             path: '/editor',

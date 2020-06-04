@@ -11,26 +11,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-# app.config['CORS_HEADERS'] = 'Content-Type'
-# app.config['SECRET_KEY'] = 'secret!'
-# socketio = SocketIO(app, cors_allowed_origins="*")
-# cors2 = CORS(socketio)
-
-
-# @sockets.route('/echo')
-# def echo_socket(ws):
-#     global open_sockets
-#     user_uuid = str(uuid.uuid4())
-#
-#     open_sockets.update({user_uuid: {"state": "connected", "socket": ws}})
-#     ws.send(str({'state': 'send_file', 'uuid': user_uuid}))
-#
-#     while not ws.closed:
-#         pass
-#
-#     return 1
-
-
 @app.route("/convertVideo/<newFormat>", methods=["POST"])
 def convertVideo(newFormat):
     global videos_status
@@ -41,6 +21,8 @@ def convertVideo(newFormat):
         f.save(tmp_filename)
 
         new_filename = str(uuid.uuid4())
+
+        videos_status.update({new_filename: False})
 
         thread1 = threading.Thread(target=video_converter.convert_video,
                                    args=(newFormat, tmp_filename, new_filename, videos_status))
@@ -67,7 +49,8 @@ def putWatermark(operations):
         videos_status.update({new_filename: False})
 
         thread1 = threading.Thread(target=video_converter.put_watermark,
-                                   args=(tmp_video_filename, tmp_image_filename, new_filename, videos_status, operations))
+                                   args=(
+                                   tmp_video_filename, tmp_image_filename, new_filename, videos_status, operations))
         thread1.start()
 
         return jsonify(uuid=new_filename)
@@ -78,7 +61,6 @@ def simpleEditVideo(operations):
     global videos_status
     if request.method == 'POST':
         f = next(iter(request.files.values()))
-        filename = f.filename
         tmp_filename = str(uuid.uuid4()) + '.' + video_converter.video_extension(f.filename)
         f.save(tmp_filename)
 
@@ -88,9 +70,6 @@ def simpleEditVideo(operations):
 
         thread1 = threading.Thread(target=video_converter.simple_edit_video,
                                    args=(tmp_filename, operations, new_filename, videos_status))
-
-        # thread1 = threading.Thread(target=video_converter.watermark,
-        #                            args=(tmp_filename, operations, new_filename, videos_status))
 
         thread1.start()
 
@@ -105,10 +84,11 @@ def downloadVideo(user_uuid):
             for fname in os.listdir('.'):
                 if fname.startswith(user_uuid):
                     response = make_response(send_file("/backend/" + fname, attachment_filename=fname))
-                    #response = make_response(send_file(fname, attachment_filename=fname))
+                    # response = make_response(send_file(fname, attachment_filename=fname))
                     response.headers['x-suggested-filename'] = fname
                     return response
     return "not found"
+
 
 @app.route("/status/<user_uuid>", methods=["POST"])
 def status(user_uuid):
@@ -125,10 +105,6 @@ def status(user_uuid):
 
 
 if __name__ == '__main__':
-    # rabbit.receive()
     open_sockets = {}
     videos_status = {}
     app.run(host="0.0.0.0", debug=True)
-    # socketio.run(app)
-    # http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-    # http_server.serve_forever()

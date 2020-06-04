@@ -33,7 +33,7 @@
     </p>
     <v-row>
       <v-col
-        cols="10"
+        cols="12"
         sm="3"
       >
         <v-autocomplete
@@ -45,13 +45,17 @@
         />
       </v-col>
       <v-col
-        cols="10"
+        cols="12"
         sm="3"
-      />
-      <v-col
-        cols="10"
-        sm="3"
-      />
+      >
+        <v-select
+          v-model="selected_op"
+          :items="op"
+          menu-props="auto"
+          label="Select opacity"
+          outlined
+        />
+      </v-col>
     </v-row>
     <v-alert
       v-model="alert"
@@ -92,6 +96,8 @@
         image: null,
         percent: 0,
         uploading: false,
+        selected_op: '0.5',
+        op: Array(10).fill().map((_, idx) => (0.1 + idx / 10).toFixed(1)),
         showInfo: false,
         button_is_enabled: false,
         selected_position: 'Top left',
@@ -142,6 +148,8 @@
       getOperations () {
         let operations = ''
         operations += 'position,' + this.selected_position
+        operations += ','
+        operations += 'opacity,' + this.selected_op
         console.log(operations)
         return operations
       },
